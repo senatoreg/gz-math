@@ -1,0 +1,61 @@
+Source: gz-math
+Section: libs
+Priority: optional
+Maintainer: Giovanni Senatore <giovanni.senatore@gmail.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ cmake,
+ python3-all,
+ gz-cmake,
+ libeigen3-dev,
+ ruby-dev,
+Standards-Version: 4.6.2
+Homepage: https://gazebosim.org/
+#Vcs-Browser: https://salsa.debian.org/debian/gz-math
+#Vcs-Git: https://salsa.debian.org/debian/gz-math.git
+
+Package: libgz-math-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ libgz-math8 (= ${binary:Version}),
+ ${misc:Depends},
+Description: General purpose math library for robot applications - development files
+ Gazebo Math, a component of Gazebo, provides general purpose math classes and
+ functions designed for robotic applications.
+
+Package: libgz-math8
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: General purpose math library for robot applications
+ Gazebo Math, a component of Gazebo, provides general purpose math classes and
+ functions designed for robotic applications.
+
+Package: python3-gz-math
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${python3:Depends},
+ ${shlibs:Depends},
+ ${misc:Depends},
+ libgz-math8 (= ${binary:Version}),
+Description: General purpose math library for robot applications
+ Gazebo Math, a component of Gazebo, provides general purpose math classes and
+ functions designed for robotic applications.
+
+Package: ruby-gz-math
+Architecture: any
+Multi-Arch: same
+Depends:
+ ruby,
+ ${shlibs:Depends},
+ ${misc:Depends},
+ libgz-math8 (= ${binary:Version}),
+Description: General purpose math library for robot applications
+ Gazebo Math, a component of Gazebo, provides general purpose math classes and
+ functions designed for robotic applications.
