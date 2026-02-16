@@ -1,6 +1,7 @@
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
-load("@rules_gazebo//gazebo:headers.bzl", "gz_configure_header", "gz_export_header")
+load("@rules_gazebo//gazebo:headers.bzl", "gz_configure_header", "gz_export_header", "gz_include_header")
 load("@rules_license//rules:license.bzl", "license")
+load("@rules_python//python:py_library.bzl", "py_library")
 load("@rules_python//python:py_test.bzl", "py_test")
 
 package(
@@ -37,13 +38,22 @@ gz_configure_header(
     package_xml = "package.xml",
 )
 
-public_headers = glob(
+public_headers_no_gen = glob(
     include = [
         "include/gz/math/*.hh",
         "include/gz/math/detail/*.hh",
         "include/gz/math/graph/*.hh",
     ],
-) + [
+)
+
+gz_include_header(
+    name = "Include",
+    out = "include/gz/math.hh",
+    hdrs = public_headers_no_gen + ["include/gz/math/config.hh"],
+)
+
+public_headers = public_headers_no_gen + [
+    "include/gz/math.hh",
     "include/gz/math/Export.hh",
     "include/gz/math/config.hh",
 ]
@@ -79,7 +89,7 @@ cc_library(
 )
 
 pybind_extension(
-    name = "gz/math8",
+    name = "gz/math",
     srcs = glob(
         include = [
             "src/python_pybind11/src/*.cc",
@@ -87,7 +97,7 @@ pybind_extension(
         ],
     ),
     defines = [
-        "BINDINGS_MODULE_NAME=math8",
+        "BINDINGS_MODULE_NAME=math",
     ],
     linkstatic = True,
     visibility = ["//visibility:private"],
@@ -96,13 +106,14 @@ pybind_extension(
 
 py_library(
     name = "python",
-    data = [":gz/math8"],
+    data = [":gz/math"],
     visibility = ["//visibility:public"],
 )
 
 test_sources = glob(
     include = [
         "src/*_TEST.cc",
+        "src/graph/*_TEST.cc",
     ],
 )
 
@@ -129,9 +140,10 @@ py_test_sources = glob(
 [
     py_test(
         name = src.replace("/", "_").replace(".py", "_py").replace("src_python_pybind11_test_", ""),
-        srcs = [src],
+        srcs = [src, "src/python_pybind11/test/numpy_helpers.py" ],
         main = src,
         deps = [":python"],
+        imports = ["src/python_pybind11/test/"],
     )
     for src in py_test_sources
 ]

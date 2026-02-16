@@ -1,11 +1,11 @@
 # Detect if we are doing a standalone build of the bindings, using an external gz-math
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   cmake_minimum_required(VERSION 3.22.1)
-  find_package(gz-cmake4 4.1.0 REQUIRED)
+  find_package(gz-cmake REQUIRED)
   gz_get_package_xml_version(${CMAKE_SOURCE_DIR}/../../package.xml GZ_MATH)
-  project(gz-math${GZ_MATH_VERSION_MAJOR}-python VERSION ${GZ_MATH_VERSION})
-  find_package(gz-math${PROJECT_VERSION_MAJOR} REQUIRED)
-  set(PROJECT_LIBRARY_TARGET_NAME "gz-math${PROJECT_VERSION_MAJOR}::gz-math${PROJECT_VERSION_MAJOR}")
+  project(gz-math-python VERSION ${GZ_MATH_VERSION})
+  find_package(gz-math REQUIRED)
+  set(PROJECT_LIBRARY_TARGET_NAME "gz-math::gz-math")
   # require python dependencies to be found
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
   set(CMAKE_REQUIRE_FIND_PACKAGE_pybind11 TRUE)
@@ -24,7 +24,7 @@ else()
 endif()
 
 message(STATUS "Building pybind11 interfaces")
-set(BINDINGS_MODULE_NAME "math${PROJECT_VERSION_MAJOR}")
+set(BINDINGS_MODULE_NAME "math")
 # Split from main extension and converted to pybind11
 pybind11_add_module(${BINDINGS_MODULE_NAME} MODULE
   src/_gz_math_pybind11.cc
@@ -50,6 +50,7 @@ pybind11_add_module(${BINDINGS_MODULE_NAME} MODULE
   src/Matrix6.cc
   src/MecanumDriveOdometry.cc
   src/MovingWindowFilter.cc
+  src/OccupancyGrid.cc
   src/PID.cc
   src/Polynomial3.cc
   src/Pose3.cc
@@ -161,6 +162,7 @@ if (BUILD_TESTING)
     Matrix6_TEST
     MecanumDriveOdometry_TEST
     MovingWindowFilter_TEST
+    OccupancyGrid_TEST
     OrientedBox_TEST
     PID_TEST
     Plane_TEST
